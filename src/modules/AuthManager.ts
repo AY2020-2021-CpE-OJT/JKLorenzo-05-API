@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import JWT from "jsonwebtoken";
-import { AuthData, AuthPayload } from "../structures/Auth.js";
+import AuthData from "../structures/AuthData.js";
+import AuthPayload from "../structures/AuthPayload.js";
 
 const _sessions = new Map<string, string>();
 

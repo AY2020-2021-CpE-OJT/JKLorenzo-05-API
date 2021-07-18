@@ -1,4 +1,4 @@
-import { PBPartialData } from "../structures/PBData.js";
+import PBPartialData from "../structures/PBPartialData.js";
 import { ExpectError } from "./Errors.js";
 import { safeFormat } from "./Functions.js";
 

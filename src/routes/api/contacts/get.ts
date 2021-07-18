@@ -2,7 +2,8 @@ import AuthManager from "../../../modules/AuthManager.js";
 import { Router } from "express";
 import { MongoClient } from "mongodb";
 import CacheManager from "../../../modules/CacheManager.js";
-import { PBData, PBPartialData } from "../../../structures/PBData.js";
+import PBData from "../../../structures/PBData.js";
+import PBPartialData from "../../../structures/PBPartialData.js";
 import { expectAll } from "../../../utils/TypeGuards.js";
 
 export default function (router: Router, client: MongoClient): Router {

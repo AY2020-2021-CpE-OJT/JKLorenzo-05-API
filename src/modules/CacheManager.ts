@@ -1,4 +1,4 @@
-import { PBData } from "../structures/PBData";
+import PBData from "../structures/PBData.js";
 
 const _cache = new Map<string, PBData>();
 let _ordered = false;
