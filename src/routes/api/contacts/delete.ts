@@ -1,11 +1,12 @@
 import { Router } from "express";
 import express, { MongoClient } from "mongodb";
+import AuthManager from "../../../modules/AuthManager.js";
 import CacheManager from "../../../modules/CacheManager.js";
 import { PBPartialData } from "../../../structures/PBData.js";
 import { expect } from "../../../utils/TypeGuards.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.delete("/", async (req, res) => {
+  return router.delete("/", AuthManager.authenticate, async (req, res) => {
     console.log("contacts delete");
     try {
       const partial_data = req.body as PBPartialData[];

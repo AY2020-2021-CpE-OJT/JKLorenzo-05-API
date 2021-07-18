@@ -1,11 +1,12 @@
 import { Router } from "express";
 import express, { MongoClient } from "mongodb";
+import AuthManager from "../../../modules/AuthManager.js";
 import CacheManager from "../../../modules/CacheManager.js";
 import { PBData } from "../../../structures/PBData.js";
 import { expect, expectAll } from "../../../utils/TypeGuards.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.delete("/:id", async (req, res) => {
+  return router.delete("/:id", AuthManager.authenticate, async (req, res) => {
     console.log("contact delete");
     try {
       // expect a valid id

@@ -1,11 +1,12 @@
 import { Router } from "express";
 import express, { MongoClient } from "mongodb";
+import AuthManager from "../../../modules/AuthManager.js";
 import CacheManager from "../../../modules/CacheManager.js";
 import { PBData, PBPartialData } from "../../../structures/PBData.js";
 import { expect, expectAll } from "../../../utils/TypeGuards.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.patch("/:id", async (req, res) => {
+  return router.patch("/:id", AuthManager.authenticate, async (req, res) => {
     console.log("contact patch");
     try {
       const raw_data = req.body as PBPartialData;
