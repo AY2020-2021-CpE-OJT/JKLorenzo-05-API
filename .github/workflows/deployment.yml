@@ -34,3 +34,5 @@ jobs:
           delay: 15
         env:
           HD_URI: ${{secrets.DB_URI}}
+          HD_JWT_ACCESS: ${{secrets.JWT_ACCESS}}
+          HD_JWT_REGISTER: ${{secrets.JWT_REGISTER}}
