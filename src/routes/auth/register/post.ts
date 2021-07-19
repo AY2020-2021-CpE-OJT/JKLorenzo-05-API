@@ -22,7 +22,7 @@ export default function (router: Router, client: MongoClient): Router {
       res.json(encoded_data);
     } catch (error) {
       console.error(error);
-      res.status(403).send(String(error));
+      res.sendStatus(403);
     }
   });
 }
