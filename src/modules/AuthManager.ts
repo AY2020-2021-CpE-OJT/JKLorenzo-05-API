@@ -20,19 +20,19 @@ export default class AuthManager {
 
       // check if session id is registered
       if (!payload.pld?.id || !_sessions.has(payload.pld.id)) {
-        return res.sendStatus(403);
+        return res.sendStatus(401);
       }
 
       // check if token is registered
       if (_sessions.get(payload.pld.id) !== token) {
-        return res.sendStatus(403);
+        return res.sendStatus(401);
       }
 
       // continue
       next();
     } catch (error) {
       console.error(error);
-      return res.sendStatus(403);
+      return res.sendStatus(401);
     }
   }
 
