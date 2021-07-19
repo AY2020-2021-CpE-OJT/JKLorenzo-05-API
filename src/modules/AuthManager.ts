@@ -24,7 +24,7 @@ export default class AuthManager {
       }
 
       // check if token is registered
-      if (_sessions.get(payload.pld.id) === token) {
+      if (_sessions.get(payload.pld.id) !== token) {
         return res.sendStatus(403);
       }
 
