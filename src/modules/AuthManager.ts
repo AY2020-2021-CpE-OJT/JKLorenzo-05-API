@@ -86,7 +86,7 @@ export default class AuthManager {
       {
         issuer: "JKLorenzoPBAPI",
         subject: "registered",
-        expiresIn: "10m",
+        expiresIn: "30s",
       }
     );
 
