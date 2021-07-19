@@ -84,6 +84,7 @@ export default class AuthManager {
       enapsulated_payload,
       process.env.JWT_REGISTER!,
       {
+        algorithm: 'HS256',
         issuer: "JKLorenzoPBAPI",
         subject: "registered",
         expiresIn: "30s",
