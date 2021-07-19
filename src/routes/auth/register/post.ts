@@ -5,6 +5,7 @@ import AuthManager from "../../../modules/AuthManager.js";
 
 export default function (router: Router, client: MongoClient): Router {
   return router.post("/", (req, res) => {
+    console.log("auth/register post");
     try {
       const auth_header = req.headers.authorization;
       const register_token = auth_header && auth_header.split(" ")[1];
