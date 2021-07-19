@@ -62,6 +62,18 @@ export default class AuthManager {
     // add token to sessions
     _sessions.set(data.id, access_token);
 
+    // sweep session after 15 mins
+    setTimeout(() => {
+      // check if this session still exists
+      if (data.id && _sessions.has(data.id)) {
+        // check if session has the same token
+        if (_sessions.get(data.id) === data.token) {
+          // delete session
+          _sessions.delete(data.id);
+        }
+      }
+    }, 600000);
+
     // encapsulate access token
     const enapsulated_payload = {
       pld: { id: data.id, token: access_token } as AuthData,
