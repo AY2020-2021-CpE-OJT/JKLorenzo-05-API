@@ -23,6 +23,11 @@ export default class AuthManager {
         return res.sendStatus(403);
       }
 
+      // check if token is registered
+      if (_sessions.get(payload.pld.id) === token) {
+        return res.sendStatus(403);
+      }
+
       // continue
       next();
     } catch (error) {
@@ -84,7 +89,7 @@ export default class AuthManager {
       enapsulated_payload,
       process.env.JWT_REGISTER!,
       {
-        algorithm: 'HS256',
+        algorithm: "HS256",
         issuer: "JKLorenzoPBAPI",
         subject: "registered",
         expiresIn: "30s",
