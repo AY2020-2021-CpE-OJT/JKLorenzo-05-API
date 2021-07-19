@@ -80,13 +80,13 @@ export default class AuthManager {
     }, 600000);
 
     // encapsulate access token
-    const enapsulated_payload = {
+    const encapsulated_payload = {
       pld: { id: data.id, token: access_token } as AuthData,
     } as AuthPayload;
 
     // encode using register token
     const encoded_token = JWT.sign(
-      enapsulated_payload,
+      encapsulated_payload,
       process.env.JWT_REGISTER!,
       {
         algorithm: "HS256",
