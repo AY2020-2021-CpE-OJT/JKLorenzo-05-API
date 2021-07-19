@@ -1,5 +1,5 @@
+import AuthData from "./AuthData";
+
 export default interface AuthPayload {
-  pld?: {
-    id?: string;
-  };
+  pld?: AuthData;
 }
