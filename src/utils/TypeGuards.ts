@@ -1,15 +1,11 @@
 import PBPartialData from "../structures/PBPartialData.js";
-import { ExpectError } from "./Errors.js";
 import { safeFormat } from "./Functions.js";
 
 type PBDataProps = "id" | "first_name" | "last_name" | "phone_numbers";
 
-export function expect(
-  data: any,
-  expected: PBDataProps[],
-  message?: string
-): void {
+export function expect(data: any, expected: PBDataProps[]): void {
   const this_data = data as PBPartialData;
+  const errors = [] as string[];
 
   if (expected.includes("id")) {
     if (
@@ -17,7 +13,7 @@ export function expect(
       typeof this_data.id !== "string" ||
       this_data.id.length !== 24
     ) {
-      throw new ExpectError(message ?? "INVALID_ID");
+      errors.push("Invalid ID");
     }
   }
 
@@ -27,7 +23,7 @@ export function expect(
       typeof this_data.first_name !== "string" ||
       safeFormat(this_data.first_name).length === 0
     ) {
-      throw new ExpectError(message ?? "INVALID_FIRST_NAME");
+      errors.push("Invalid First Name");
     }
   }
 
@@ -37,7 +33,7 @@ export function expect(
       typeof this_data.last_name !== "string" ||
       safeFormat(this_data.last_name).length === 0
     ) {
-      throw new ExpectError(message ?? "INVALID_LAST_NAME");
+      errors.push("Invalid Last Name");
     }
   }
 
@@ -49,11 +45,13 @@ export function expect(
         (pnum) => typeof pnum !== "string" || safeFormat(pnum).length === 0
       )
     ) {
-      throw new ExpectError(message ?? "INVALID_PHONE_NUMBERS");
+      errors.push("Invalid Phone Numbers");
     }
   }
+
+  if (errors.length) throw errors.join("\n");
 }
 
-export function expectAll(data: any, message?: string): void {
-  expect(data, ["id", "first_name", "last_name", "phone_numbers"], message);
+export function expectAll(data: any): void {
+  expect(data, ["id", "first_name", "last_name", "phone_numbers"]);
 }
