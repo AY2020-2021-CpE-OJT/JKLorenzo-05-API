@@ -37,8 +37,12 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export function isValidReq(token: string, data: AuthData): boolean {
+export function isValidAuthReq(token: string, data?: AuthData): boolean {
   try {
+    // check data
+    if (!data?.id) return false;
+    if (!data?.token) return false;
+
     // verify token
     const payload = JWT.verify(token, _register_secret, {
       algorithms: ["HS256"],
@@ -48,7 +52,7 @@ export function isValidReq(token: string, data: AuthData): boolean {
 
     // check if token matches the request body
     if (!payload.pld || payload.pld.id !== data.id || token !== data.token) {
-      throw new Error("SESSION_MISMATCH");
+      return false;
     }
 
     return true;
@@ -59,7 +63,8 @@ export function isValidReq(token: string, data: AuthData): boolean {
 
 export function authorize(data: AuthData): AuthData {
   // check if session id is invalid
-  if (!data.id) throw new Error("INVALID_SESSION_ID");
+  if (!data.id) throw "INVALID_SESSION_ID";
+  if (!data.token) throw "INVALID_SESSION_TOKEN";
 
   // create payload
   const payload = {
