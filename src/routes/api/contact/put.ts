@@ -18,7 +18,11 @@ export default function (router: Router, client: MongoClient): Router {
       } as PBPartialData;
 
       // expect a partial data with firstname, lastname and phone numbers
-      expect(insert_data, ["first_name", "last_name", "phone_numbers"]);
+      try {
+        expect(insert_data, ["first_name", "last_name", "phone_numbers"]);
+      } catch (error) {
+        return res.status(400).send(error);
+      }
 
       // insert contact
       const operation = await client
@@ -28,7 +32,7 @@ export default function (router: Router, client: MongoClient): Router {
 
       // check insert count
       if (operation.insertedCount === 0) {
-        throw new Error("OPERATION_FAILED");
+        return res.status(409).send("Failed to create contact");
       }
 
       // construct data
@@ -40,7 +44,7 @@ export default function (router: Router, client: MongoClient): Router {
       } as PBData;
 
       // check data
-      expectAll(data, "UNEXPECTED_RESULT");
+      expectAll(data);
 
       // update cache
       update(data);
@@ -48,11 +52,11 @@ export default function (router: Router, client: MongoClient): Router {
       // invalidate cache order
       invalidateOrder();
 
-      // send data
-      await res.json(data);
+      // 201 Created
+      await res.status(201).json(data);
     } catch (error) {
       console.error(error);
-      res.status(400).send(String(error));
+      await res.sendStatus(500);
     }
   });
 }

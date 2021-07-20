@@ -12,7 +12,13 @@ export default function (router: Router, client: MongoClient): Router {
       const partial_data = req.body as PBPartialData[];
 
       // expect valid ids
-      for (const this_data of partial_data) expect(this_data, ["id"]);
+      for (const this_data of partial_data) {
+        try {
+          expect(this_data, ["id"]);
+        } catch (error) {
+          return res.status(400).send(error);
+        }
+      }
 
       // delete contacts
       const operation = await client
@@ -26,7 +32,7 @@ export default function (router: Router, client: MongoClient): Router {
 
       // check operation status
       if (!operation.result.ok) {
-        throw new Error("OPERATION_FAILED");
+        return res.status(409).send("Failed to delete contacts");
       }
 
       // get delete count
@@ -37,11 +43,17 @@ export default function (router: Router, client: MongoClient): Router {
         invalidateCache();
       }
 
-      // send delete count
-      await res.send(delete_count.toString());
+      // send delete result
+      if (delete_count === 0) {
+        await res.send(`No contact was deleted`);
+      } else if (delete_count === 1) {
+        await res.send(`${delete_count} contact deleted`);
+      } else {
+        await res.send(`${delete_count} contacts deleted`);
+      }
     } catch (error) {
       console.error(error);
-      res.status(400).send(String(error));
+      await res.sendStatus(500);
     }
   });
 }

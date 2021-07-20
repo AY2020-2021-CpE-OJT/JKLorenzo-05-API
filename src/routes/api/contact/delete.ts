@@ -10,7 +10,11 @@ export default function (router: Router, client: MongoClient): Router {
     console.log("contact delete");
     try {
       // expect a valid id
-      expect(req.params, ["id"]);
+      try {
+        expect(req.params, ["id"]);
+      } catch (error) {
+        return res.status(400).send(error);
+      }
 
       // update contact
       const operation = await client
@@ -20,7 +24,7 @@ export default function (router: Router, client: MongoClient): Router {
 
       // expect a valid output
       if (!operation.value) {
-        throw new Error("CONTACT_NOT_FOUND");
+        return res.status(409).send("Failed to delete contact");
       }
 
       // construct
@@ -32,16 +36,16 @@ export default function (router: Router, client: MongoClient): Router {
       } as PBData;
 
       // check data
-      expectAll(data, "UNEXPECTED_RESULT");
+      expectAll(data);
 
       // update cache
       remove(data.id);
 
-      // ack request
-      await res.send("OK");
+      // 205 Reset Content
+      await res.sendStatus(205);
     } catch (error) {
       console.error(error);
-      res.status(400).send(String(error));
+      await res.sendStatus(500);
     }
   });
 }

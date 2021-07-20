@@ -38,7 +38,7 @@ export default function (router: Router, client: MongoClient): Router {
           } as PBData;
 
           // check data
-          expectAll(this_data, "UNEXPECTED_RESULT");
+          expectAll(this_data);
           return this_data;
         });
 
@@ -58,7 +58,7 @@ export default function (router: Router, client: MongoClient): Router {
       );
     } catch (error) {
       console.error(error);
-      res.status(400).send(String(error));
+      await res.sendStatus(500);
     }
   });
 }

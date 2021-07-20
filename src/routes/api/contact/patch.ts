@@ -13,21 +13,30 @@ export default function (router: Router, client: MongoClient): Router {
       const raw_data = req.body as PBPartialData;
       const update_data = {} as PBPartialData;
 
-      // expect valid id
-      expect(req.params, ["id"]);
+      try {
+        // expect valid id
+        expect(req.params, ["id"]);
 
-      // expect valid data
-      if ("first_name" in raw_data) {
-        expect(raw_data, ["first_name"]);
-        update_data.first_name = raw_data.first_name;
-      }
-      if ("last_name" in raw_data) {
-        expect(raw_data, ["last_name"]);
-        update_data.last_name = raw_data.last_name;
-      }
-      if ("phone_numbers" in raw_data) {
-        expect(raw_data, ["phone_numbers"]);
-        update_data.phone_numbers = raw_data.phone_numbers;
+        // expect valid data
+        if ("first_name" in raw_data) {
+          expect(raw_data, ["first_name"]);
+          update_data.first_name = raw_data.first_name;
+        }
+        if ("last_name" in raw_data) {
+          expect(raw_data, ["last_name"]);
+          update_data.last_name = raw_data.last_name;
+        }
+        if ("phone_numbers" in raw_data) {
+          expect(raw_data, ["phone_numbers"]);
+          update_data.phone_numbers = raw_data.phone_numbers;
+        }
+
+        // check if there's at least 1 property to be updated
+        if (Object.keys(update_data).length === 0) {
+          throw "No update data";
+        }
+      } catch (error) {
+        return res.status(400).send(error);
       }
 
       // update contact
@@ -44,7 +53,7 @@ export default function (router: Router, client: MongoClient): Router {
 
       // expect a valid output
       if (!operation.value) {
-        throw new Error("OPERATION_FAILED");
+        return res.status(409).send("Failed to update contact");
       }
 
       // construct
@@ -56,7 +65,7 @@ export default function (router: Router, client: MongoClient): Router {
       } as PBData;
 
       // check data
-      expectAll(data, "UNEXPECTED_RESULT");
+      expectAll(data);
 
       // invalidate cache order on name change
       const previous_data = get(data.id);
@@ -70,11 +79,11 @@ export default function (router: Router, client: MongoClient): Router {
       // update cache
       update(data);
 
-      // ack request
-      await res.send("OK");
+      // 205 Reset Content
+      await res.sendStatus(205);
     } catch (error) {
       console.error(error);
-      res.status(400).send(String(error));
+      await res.sendStatus(500);
     }
   });
 }
