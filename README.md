@@ -22,7 +22,7 @@ The list of all the available routes and their corresponding information.
 | Method 	|       Route      	|                         Request Body                         	|                   Response Body                  	| Status Code 	|
 |:------:	|:----------------:	|:------------------------------------------------------------:	|:------------------------------------------------:	|:-----------:	|
 |   GET  	|      /status     	|                              N/A                             	|                     "online"                     	|     200     	|
-|  POST  	|  /auth/register  	|                        AuthData as JWT                       	|                  AuthData as JWT                 	|     200     	|
+|  POST  	|  /auth/register  	|                           AuthData                          	|                     AuthData                    	|     200     	|
 | DELETE 	| /api/contact/:id 	|                              N/A                             	|                        N/A                       	|     205     	|
 |   GET  	| /api/contact/:id 	|                              N/A                             	|                      PBData                      	|     200     	|
 |  PATCH 	| /api/contact/:id 	| { first_name?, last_name?, phone_numbers? } in PBPartialData 	|                        N/A                       	|     205     	|
