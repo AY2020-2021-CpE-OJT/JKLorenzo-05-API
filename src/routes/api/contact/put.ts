@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { MongoClient } from "mongodb";
-import AuthManager from "../../../modules/AuthManager.js";
-import CacheManager from "../../../modules/CacheManager.js";
+import { authenticate } from "../../../modules/Auth.js";
+import { invalidateOrder, update } from "../../../modules/Cache.js";
+import { expect, expectAll } from "../../../utils/TypeGuards.js";
 import PBData from "../../../structures/PBData.js";
 import PBPartialData from "../../../structures/PBPartialData.js";
-import { expect, expectAll } from "../../../utils/TypeGuards.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.put("/", AuthManager.authenticate, async (req, res) => {
+  return router.put("/", authenticate, async (req, res) => {
     console.log("contact put");
     try {
       // construct data
@@ -43,10 +43,10 @@ export default function (router: Router, client: MongoClient): Router {
       expectAll(data, "UNEXPECTED_RESULT");
 
       // update cache
-      CacheManager.update(data);
+      update(data);
 
       // invalidate cache order
-      CacheManager.invalidateOrder();
+      invalidateOrder();
 
       // send data
       await res.json(data);

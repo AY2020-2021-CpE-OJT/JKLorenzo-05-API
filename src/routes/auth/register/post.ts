@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { MongoClient } from "mongodb";
+import { authorize, isValidReq } from "../../../modules/Auth.js";
 import AuthData from "../../../structures/AuthData.js";
-import AuthManager from "../../../modules/AuthManager.js";
 
 export default function (router: Router, client: MongoClient): Router {
   return router.post("/", (req, res) => {
@@ -13,16 +13,15 @@ export default function (router: Router, client: MongoClient): Router {
       if (!register_token) return res.sendStatus(401);
 
       // verify register request
-      AuthManager.verifyRegisterToken(register_token, register_data);
+      if (!isValidReq(register_token, register_data)) {
+        return res.sendStatus(403);
+      }
 
-      // authenticate session
-      const encoded_data = AuthManager.authenticateSession(register_data);
-
-      // send encoded data
-      res.json(encoded_data);
+      // authorize
+      res.json(authorize(register_data));
     } catch (error) {
       console.error(error);
-      res.sendStatus(403);
+      res.sendStatus(500);
     }
   });
 }

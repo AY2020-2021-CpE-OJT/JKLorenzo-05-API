@@ -1,12 +1,12 @@
 import { Router } from "express";
 import express, { MongoClient } from "mongodb";
-import AuthManager from "../../../modules/AuthManager.js";
-import CacheManager from "../../../modules/CacheManager.js";
-import PBPartialData from "../../../structures/PBPartialData.js";
+import { authenticate } from "../../../modules/Auth.js";
+import { invalidateCache } from "../../../modules/Cache.js";
 import { expect } from "../../../utils/TypeGuards.js";
+import PBPartialData from "../../../structures/PBPartialData.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.delete("/", AuthManager.authenticate, async (req, res) => {
+  return router.delete("/", authenticate, async (req, res) => {
     console.log("contacts delete");
     try {
       const partial_data = req.body as PBPartialData[];
@@ -34,7 +34,7 @@ export default function (router: Router, client: MongoClient): Router {
 
       // invalidate cache if atleast 1 contact is deleted
       if (delete_count > 0) {
-        CacheManager.invalidateCache();
+        invalidateCache();
       }
 
       // send delete count

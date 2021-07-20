@@ -1,20 +1,25 @@
-import AuthManager from "../../../modules/AuthManager.js";
+import { authenticate } from "../../../modules/Auth.js";
 import { Router } from "express";
 import { MongoClient } from "mongodb";
-import CacheManager from "../../../modules/CacheManager.js";
+import {
+  getAll,
+  isOrdered,
+  isValid,
+  updateAll,
+} from "../../../modules/Cache.js";
+import { expectAll } from "../../../utils/TypeGuards.js";
 import PBData from "../../../structures/PBData.js";
 import PBPartialData from "../../../structures/PBPartialData.js";
-import { expectAll } from "../../../utils/TypeGuards.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.get("/", AuthManager.authenticate, async (req, res) => {
+  return router.get("/", authenticate, async (req, res) => {
     console.log("contacts get");
     try {
       // get data from cache
-      let data = CacheManager.getAll();
+      let data = getAll();
 
       // check if cache is invalid
-      if (!CacheManager.isValid() || !CacheManager.isOrdered()) {
+      if (!isValid() || !isOrdered()) {
         // get data from the db
         const result = await client
           .db("phonebook")
@@ -38,7 +43,7 @@ export default function (router: Router, client: MongoClient): Router {
         });
 
         // update cache
-        CacheManager.updateAll(data);
+        updateAll(data);
       }
 
       // send data without phone numbers

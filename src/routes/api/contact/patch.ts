@@ -1,13 +1,13 @@
 import { Router } from "express";
 import express, { MongoClient } from "mongodb";
-import AuthManager from "../../../modules/AuthManager.js";
-import CacheManager from "../../../modules/CacheManager.js";
+import { authenticate } from "../../../modules/Auth.js";
+import { get, invalidateOrder, update } from "../../../modules/Cache.js";
+import { expect, expectAll } from "../../../utils/TypeGuards.js";
 import PBData from "../../../structures/PBData.js";
 import PBPartialData from "../../../structures/PBPartialData.js";
-import { expect, expectAll } from "../../../utils/TypeGuards.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.patch("/:id", AuthManager.authenticate, async (req, res) => {
+  return router.patch("/:id", authenticate, async (req, res) => {
     console.log("contact patch");
     try {
       const raw_data = req.body as PBPartialData;
@@ -59,16 +59,16 @@ export default function (router: Router, client: MongoClient): Router {
       expectAll(data, "UNEXPECTED_RESULT");
 
       // invalidate cache order on name change
-      const previous_data = CacheManager.get(data.id);
+      const previous_data = get(data.id);
       if (
         previous_data?.first_name !== data.first_name ||
         previous_data?.last_name !== data.last_name
       ) {
-        CacheManager.invalidateOrder();
+        invalidateOrder();
       }
 
       // update cache
-      CacheManager.update(data);
+      update(data);
 
       // ack request
       await res.send("OK");

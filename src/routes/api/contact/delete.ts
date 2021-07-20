@@ -1,12 +1,12 @@
 import { Router } from "express";
 import express, { MongoClient } from "mongodb";
-import AuthManager from "../../../modules/AuthManager.js";
-import CacheManager from "../../../modules/CacheManager.js";
-import PBData from "../../../structures/PBData.js";
+import { authenticate } from "../../../modules/Auth.js";
+import { remove } from "../../../modules/Cache.js";
 import { expect, expectAll } from "../../../utils/TypeGuards.js";
+import PBData from "../../../structures/PBData.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.delete("/:id", AuthManager.authenticate, async (req, res) => {
+  return router.delete("/:id", authenticate, async (req, res) => {
     console.log("contact delete");
     try {
       // expect a valid id
@@ -35,7 +35,7 @@ export default function (router: Router, client: MongoClient): Router {
       expectAll(data, "UNEXPECTED_RESULT");
 
       // update cache
-      CacheManager.delete(data.id);
+      remove(data.id);
 
       // ack request
       await res.send("OK");

@@ -1,22 +1,22 @@
 import { Router } from "express";
 import express, { MongoClient } from "mongodb";
-import AuthManager from "../../../modules/AuthManager.js";
-import CacheManager from "../../../modules/CacheManager.js";
-import PBData from "../../../structures/PBData.js";
+import { authenticate } from "../../../modules/Auth.js";
+import { get, isValid } from "../../../modules/Cache.js";
 import { expect, expectAll } from "../../../utils/TypeGuards.js";
+import PBData from "../../../structures/PBData.js";
 
 export default function (router: Router, client: MongoClient): Router {
-  return router.get("/:id", AuthManager.authenticate, async (req, res) => {
+  return router.get("/:id", authenticate, async (req, res) => {
     console.log("contact get");
     try {
       // expect a valid id
       expect(req.params, ["id"]);
 
       // Get data from cache
-      let data = CacheManager.get(req.params.id);
+      let data = get(req.params.id);
 
       // Check if cache is not valid
-      if (!CacheManager.isValid()) {
+      if (!isValid()) {
         // get data from db
         const result = await client
           .db("phonebook")
